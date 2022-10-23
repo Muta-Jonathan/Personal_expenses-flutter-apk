@@ -1,11 +1,19 @@
 import 'package:expense_cal/widgets/card_dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import './widgets/new_transaction.dart';
 import './models/transaction.dart';
 import './widgets/transaction_list.dart';
 
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized;
+  // SystemChrome.setPreferredOrientations(
+  //   [
+  //     DeviceOrientation.portraitUp,
+  //     DeviceOrientation.portraitDown,
+  //   ],
+  // );
   runApp(const MyApp());
 }
 
@@ -112,26 +120,38 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    final appBar = AppBar(
+      title: Text('Personal Expenses'),
+      actions: [
+        IconButton(
+          onPressed: () => _startBottomSheet(context),
+          icon: Icon(Icons.add),
+        )
+      ],
+    );
+    final mediaQuery = MediaQuery.of(context);
+    
+    double dynamicSize = (mediaQuery.size.height -
+        appBar.preferredSize.height -
+        mediaQuery.padding.top);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Personal Expenses'),
-        actions: [
-          IconButton(
-            onPressed: () => _startBottomSheet(context),
-            icon: Icon(Icons.add),
-          )
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Container(
-              child: CardDashboard(
-            recentTransactions: _recentTransactions,
-          )),
-          TransactionList(
-            transactions: _userTransactions,
-            deleteTransaction: _deleteTransaction,
+            height: dynamicSize * 0.3,
+            child: CardDashboard(
+              recentTransactions: _recentTransactions,
+            ),
+          ),
+          Container(
+            height: dynamicSize * 0.7,
+            child: TransactionList(
+              transactions: _userTransactions,
+              deleteTransaction: _deleteTransaction,
+            ),
           ),
         ]),
       ),
